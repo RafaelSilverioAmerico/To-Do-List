@@ -3,6 +3,7 @@ package br.com.todolist.controller;
 
 import br.com.todolist.model.Tarefa;
 import br.com.todolist.repository.TarefaRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class TarefaController {
     }
 
     @PostMapping
-    public Tarefa criar(@RequestBody Tarefa tarefa) {
+    public Tarefa criar(@Valid @RequestBody Tarefa tarefa) {
 
         return this.tarefaRepository.save(tarefa);
     }
@@ -42,7 +43,7 @@ public class TarefaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tarefa> atualizar(@PathVariable Long id, @RequestBody Tarefa tarefa) {
+    public ResponseEntity<Tarefa> atualizar(@Valid @PathVariable Long id, @Valid @RequestBody Tarefa tarefa) {
         Optional<Tarefa> tarefaExistente = this.tarefaRepository.findById(id);
 
 
