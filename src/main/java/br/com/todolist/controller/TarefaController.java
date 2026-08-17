@@ -1,6 +1,8 @@
 package br.com.todolist.controller;
 
 
+import br.com.todolist.dto.TarefaRequestDTO;
+import br.com.todolist.dto.TarefaUpdateDTO;
 import br.com.todolist.model.Tarefa;
 import br.com.todolist.repository.TarefaRepository;
 import jakarta.validation.Valid;
@@ -25,10 +27,14 @@ public class TarefaController {
         return this.tarefaRepository.findAll();
     }
 
-    @PostMapping
-    public Tarefa criar(@Valid @RequestBody Tarefa tarefa) {
 
-        return this.tarefaRepository.save(tarefa);
+    // Usando o método DTO para separa o que vem do cliente e o que o banco de dados gera //
+    @PostMapping
+    public Tarefa criar(@Valid @RequestBody  TarefaRequestDTO dto) {
+
+        Tarefa novaTarefa = new Tarefa(null, dto.getTitulo(), dto.getDescricao(), false);
+        return this.tarefaRepository.save(novaTarefa);
+
     }
 
     @GetMapping("/{id}")
@@ -43,16 +49,16 @@ public class TarefaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tarefa> atualizar(@Valid @PathVariable Long id, @Valid @RequestBody Tarefa tarefa) {
+    public ResponseEntity<Tarefa> atualizar(@PathVariable Long id, @Valid @RequestBody TarefaUpdateDTO dto) {
         Optional<Tarefa> tarefaExistente = this.tarefaRepository.findById(id);
 
 
         if (tarefaExistente.isPresent()) {
 
             Tarefa tarefaAtualizado = tarefaExistente.get();
-            tarefaAtualizado.setTitulo(tarefa.getTitulo());
-            tarefaAtualizado.setDescricao(tarefa.getDescricao());
-            tarefaAtualizado.setStatus(tarefa.isStatus());
+            tarefaAtualizado.setTitulo(dto.getTitulo());
+            tarefaAtualizado.setDescricao(dto.getDescricao());
+            tarefaAtualizado.setStatus(dto.isStatus());
 
             tarefaRepository.save(tarefaAtualizado);
             return ResponseEntity.ok(tarefaAtualizado);
